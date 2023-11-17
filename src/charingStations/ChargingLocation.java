@@ -1,8 +1,8 @@
 package charingStations;
 
 import car.Car;
-import charingStations.exceptions.ChargingException;
-import charingStations.exceptions.OccupiedException;
+import exceptions.ChargingException;
+import exceptions.OccupiedException;
 
 
 // Task: Handling Multiple Exceptions
@@ -16,19 +16,21 @@ public class ChargingLocation {
             if (!occupied) {
                 try {
                     // TODO: try charging the car
-                    throw new Exception("--------.");
+                    throw new Exception("unexcepted random exception");
                 } catch (Exception e) {
                     // wrap the original exception in a ChargingException and re-throw it
-                    throw new ChargingException("Charging failed.", e);
+                	System.out.println("an exception has been caught annd will be re throwen");    	
+                    throw new OccupiedException("Charging failed.", e);
                 }
             } else {
-                throw new OccupiedException("Charging location is occupied.");
+                throw new Exception("Charging location is occupied.");
             }
         } catch (OccupiedException e) {
             System.err.println("OccupiedException: " + e.getMessage());
         } catch (ChargingException e) {
             System.err.println("ChargingException: " + e.getMessage());
-            System.err.println("Cause: " + e.getCause().getMessage());
+            if (e.getCause() != null)
+            	System.err.println("Cause: " + e.getCause().getMessage());
         } catch (Exception e) {
             System.err.println("Unexpected Exception: " + e.getMessage());
         }

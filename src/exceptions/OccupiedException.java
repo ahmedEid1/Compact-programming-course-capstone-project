@@ -1,4 +1,4 @@
-package charingStations.exceptions;
+package exceptions;
 
 public class OccupiedException extends ChargingException {
     public OccupiedException(String message) {
