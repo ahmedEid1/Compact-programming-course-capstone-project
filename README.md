@@ -8,11 +8,11 @@
 
 ## team responsibilities for task 1:
 1. handling multiple exception: in the chargingLocation class the OccupiedException is handle then any other ChargingException is handles then any other exceptions are handled 
-   - team member 1
+   - Silpa Prasad Sivaprasad
 2. chain exceptions + rethrow exception: catch the exception then put it into a more meaningful exception and re-throw it 
-   - team member 2
+   - Ahmed Hobeishy
 3. Resource Management: use try-with-resources to manage the filteWriter in the baseLoger class 
-   - team member 3
+   - Varsha Vijayan
 
 ## Environment:
 - Eclipse IDE
