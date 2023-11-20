@@ -2,21 +2,52 @@ package simulation;
 
 import charingStations.ChargingLocation;
 import logging.BaseLogger;
+import car.Car;
+import charingStations.ChargingStation;
+import dataexchange.ByteDataExchanger;
+import dataexchange.CharacterDataExchanger;
+import dataexchange.interfaces.DateExchanger;
+import logging.LogManager;
+import metadata.CarMetadata;
+import metadata.ChargingStationMetadata;
+import metadata.MetadataLoader;
+import users.Admin;
+import users.User;
+import weatherSimulator.WeatherService;
+
+import java.util.Map;
 
 public class ChargingSimulation {
 
 	public static void main(String[] args) {
-		// 1. handling multiple exception
-		ChargingLocation chargingLocation = new ChargingLocation();
-        chargingLocation.chargeCar(null);
-		
-		// 2. catching an exception chaining it to another exception and re-throwing it
-		// TODO: change occupied to false in the chargingLocation
-	
-		// 3. resource management using Try with resources
-        BaseLogger logger = new BaseLogger();
-        logger.log("Hello World!");
+        // Test for: Create multi-user access to the charging station – external users who could book timeslot and be part of the prioritized queue, administrators
+        // Done
+        // we have users: can add themselves to the queue of a charging station, but not handle the queue or change the charging method
+        // Admins can change the charging method of a charging station and handle the queue of their charging station,
+        // but not a different charging station
+//        accessManagementForStations();
 
+
+        // Test for: Create metadata for your project
+        // the cars and station in the simulation are loaded from metadata files, and if any new car or station is added
+        // during the runtime, the metadata files are updated
+//        loadAndAddMetaData();
+
+
+        /*
+        Test for: managing the log files:
+         - create, move, delete, archive.
+         Log files should be devided into classes:
+          1. functionality of the system
+          2.functionality of a  charging station
+          3. functionality of the energy management system.
+        * */
+//        logManagement("write");
+//        logManagement("archive");
+
+
+        // Test for: Use byte and character streams for simulation of the data exchange in the system
+        exchangeDateUsingDateExchanger();
 	}
 	
 	private static void loadAndAddMetaData() {
@@ -76,5 +107,55 @@ public class ChargingSimulation {
 	        }
 
 	    }
+	 
+	    private static void accessManagementForStations() {
+	        // Create instances of users, charging stations, and administrators
+	        User user1 = new User("User001", new Car("Car001", "ModelX"));
+	        User user2 = new User("User002", new Car("Car002", "ModelY"));
+
+	        ChargingStation stationA = new ChargingStation("StationA");
+	        Admin admin1 = new Admin("Admin001");
+	        stationA.addAdmin(admin1.getAdminId());
+
+	        ChargingStation stationB = new ChargingStation("StationB");
+	        Admin admin2 = new Admin("Admin002");
+	        stationB.addAdmin(admin2.getAdminId());
+
+	        // users can add themselves to the queue of a charging station
+	        user1.addToQueue(stationA);
+	        user2.addToQueue(stationB);
+	        // but can't handle the queue or change the charging method if they try an exception is thrown
+	        try {
+	            stationA.setChargingMethod("Fast Charging", user1.getId());
+	        } catch (IllegalAccessException e) {
+	            System.out.println("this use is not an admin");
+	            LogManager.logChargingStationFunctionality(user1.getId() + " is not an admin" + " at Charging Station " + stationA.getStationId());
+	        }
+
+	        // admin can change the charging method of a charging station
+	        admin1.changeChargingMethod(stationA, "Fast Charging");
+	        // admin can handle the queue of a charging station
+	        admin1.handleQueue(stationA);
+	        // but can't do this to another charging station, this will throw an exception
+	        admin1.changeChargingMethod(stationB, "Fast Charging");
+	    }
+	    	
+	    
+	    private static void exchangeDateUsingDateExchanger() {
+	        // 1. create a ByteDataExchanger and CharacterDataExchanger objects that can write and read data from files
+	        DateExchanger byteDataExchanger = new ByteDataExchanger();
+	        DateExchanger characterDataExchanger = new CharacterDataExchanger();
+
+	        // 2. exchange data between the weatherService and changing station using files
+	        ChargingStation chargingStation = new ChargingStation("CS-1");
+	        // weather can be recorded in a file using byte or character streams
+//	        WeatherService.recordWeather("weatherInfo/chargingStation1.txt", characterDataExchanger);
+	        WeatherService.recordWeather("weatherInfo/chargingStation1.txt", byteDataExchanger);
+
+	        // 3. sharing station can read weather from a file using byte or character streams and select the energy source based on it
+	        chargingStation.checkWeather("weatherInfo/chargingStation1.txt", characterDataExchanger);
+//	        chargingStation.checkWeather("weatherInfo/chargingStation1.txt", byteDataExchanger);
+	    }
+
 
 }
