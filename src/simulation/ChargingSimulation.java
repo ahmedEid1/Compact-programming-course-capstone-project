@@ -18,6 +18,31 @@ public class ChargingSimulation {
         logger.log("Hello World!");
 
 	}
+	
+	private static void loadAndAddMetaData() {
+        // Load charging station metadata
+        Map<String, ChargingStationMetadata> chargingStations = MetadataLoader.loadChargingStationMetadata();
+        System.out.println("Charging Station Metadata:");
+        if (chargingStations != null) {
+            chargingStations.forEach((id, metadata) -> System.out.println(metadata));
+        }
+
+        // Load car metadata
+        Map<String, CarMetadata> cars = MetadataLoader.loadCarMetadata();
+        System.out.println("\nCar Metadata:");
+        if (cars != null) {
+            cars.forEach((id, metadata) -> System.out.println(metadata));
+        }
+
+        // Add new charging station
+        ChargingStationMetadata newChargingStation = new ChargingStationMetadata("CS-3", "Test station", "Electricity");
+        MetadataLoader.writeChargingStationMetadata(newChargingStation);
+
+        // Add new car
+        CarMetadata newCar = new CarMetadata("Car-003", "New Model 3", "CS-3");
+        MetadataLoader.writeCarMetadata(newCar);
+    }
+
 	 private static void logManagement(String task) {
 	        if (task.equals("write")) {
 	            // 1. logging system functionality
