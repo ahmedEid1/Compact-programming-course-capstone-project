@@ -1,4 +1,4 @@
-# Task 1 for compact programming course - java
+# Task 2 for compact programming course - java
 
 ## team members:
 1. Ahmed Hobeishy (7219053, MDT)
@@ -7,18 +7,17 @@
 
 
 ## team responsibilities for task 1:
-1. handling multiple exception: in the chargingLocation class the OccupiedException is handle then any other ChargingException is handles then any other exceptions are handled 
-   - Silpa Prasad Sivaprasad
-2. chain exceptions + rethrow exception: catch the exception then put it into a more meaningful exception and re-throw it 
-   - Ahmed Hobeishy
-3. Resource Management: use try-with-resources to manage the filteWriter in the baseLoger class 
-   - Varsha Vijayan
+1. Silpa Prasad Sivaprasad 
+   - Create metadata for your project
+2. Ahmed Hobeishy
+   - Create multi-user access to the charging station – external users who could book timeslot and be part of the prioritized queue, administrators
+   -  Use byte and character streams for simulation of the data exchange in the system  
+3. Varsha Vijayan 
+   - managing the log files
 
 ## Environment:
 - Eclipse IDE
 - Java 17
-
-## Note: this exception handling in some classes that is partially implemented and that will be built upon in the next tasks to create the capstone project
 
 # project features:
 - can be found in the project definition folder 
