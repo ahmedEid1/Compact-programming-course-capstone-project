@@ -1,0 +1,3 @@
+CS001,Location A,Solar
+CS002,Location B,Electric
+CS-3,Sofia,Electricity
