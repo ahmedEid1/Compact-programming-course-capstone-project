@@ -116,4 +116,45 @@ public class ChargingStation {
             }
         }
     }
+ // ---- managing the station queue ----
+    public boolean addToStation(Car car) {
+        int waitingTime = getWaitingTimeForNextCar();
+        logger.log(LogLevel.INFO, "Car " + car.getId() + " - Waiting Time: " + waitingTime + " minutes");
+        if (waitingTime >= 15) {
+            logger.log(LogLevel.INFO, "Car " + car.getId() + " - Waiting Time is more than 15 minutes, switching to the next station.");
+            return false;
+        }
+        for (int i = 0; i < chargingCarList.length; i++) {
+            if (chargingCarList[i] == null) {
+                chargeCar(new ChargingCar(car, car.getChargingTime()), i);
+                smallestChargingTime = Math.min(smallestChargingTime, car.getChargingTime());
+                return true;
+            }
+        }
+        carQueue.add(car);
+        logger.log(LogLevel.INFO, "Car " + car.getId() + " added to the queue at Station.");
+        return true;
+    }
+
+    public int getWaitingTimeForNextCar() {
+        logger.log(LogLevel.INFO, "Number of empty locations: " + getNumberOfEmptyLocation());
+        logger.log(LogLevel.INFO, "Number of cars in queue: " + carQueue.size());
+        if (carQueue.size() < getNumberOfEmptyLocation()) {
+            return 0;
+        }
+        logger.log(LogLevel.INFO, "Smallest charging time: " + smallestChargingTime);
+        return smallestChargingTime + carQueue.calculateTotalChargingTime();
+    }
+
+    private int getNumberOfEmptyLocation() {
+        int nulls = 0;
+        for (ChargingCar car : chargingCarList) {
+            if (car == null) {
+                nulls++;
+            }
+        }
+        return nulls;
+    }
+    // ---- managing the station queue ----
+
 }
