@@ -1,7 +1,7 @@
 package station;
 
 import cars.Car;
-import carss.ChargingCar;
+import cars.ChargingCar;
 import energy.EnergySource;
 import energy.EnergySourceType;
 import energy.ReservedBattery;
