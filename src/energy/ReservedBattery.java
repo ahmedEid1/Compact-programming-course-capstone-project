@@ -1,5 +1,6 @@
 package energy;
 
+import logging.ChargingStationLogger;
 import logging.LogLevel;
 import logging.Logger;
 
@@ -20,55 +21,55 @@ public class ReservedBattery {
     private final int MAX_CAPACITY = 100;
     private Lock lock;
 
-    private Logger logger;
+    private ChargingStationLogger logger;
 
     public ReservedBattery(String stationName) {
         this.stationName = stationName;
         this.energyLevel = 0;
         this.lock = new ReentrantLock();
-        this.logger = new Logger("logs/ReservedBatteries/" + stationName + "/reserved_battery.log", true);
+        this.logger = new ChargingStationLogger(stationName, true);
     }
 
     public int getEnergyLevel() {
         try {
             lock.lock();
-            logger.log(LogLevel.INFO, "locking the reserved battery to get energy level");
-            logger.log(LogLevel.INFO, "energy level is " + energyLevel);
+            logger.log("locking the reserved battery to get energy level", LogLevel.INFO);
+            logger.log("energy level is " + energyLevel, LogLevel.INFO);
             return energyLevel;
         } finally {
             lock.unlock();
-            logger.log(LogLevel.INFO, "unlocking the reserved battery after getting energy level");
+            logger.log("unlocking the reserved battery after getting energy level", LogLevel.INFO);
         }
     }
 
     public void charge(int energy, String sourceName) {
         try {
             lock.lock();
-            logger.log(LogLevel.INFO, "---------------------------------------------------");
-            logger.log(LogLevel.INFO, "locking the reserved battery to charge");
-            logger.log(LogLevel.INFO, "charging " + energy + " from " + sourceName);
+            logger.log("---------------------------------------------------", LogLevel.INFO);
+            logger.log("locking the reserved battery to charge", LogLevel.INFO);
+            logger.log("charging " + energy + " from " + sourceName, LogLevel.INFO);
             if (energyLevel >= MAX_CAPACITY)
-                logger.log(LogLevel.INFO, "the reserved battery is full, cannot charge more energy");
+                logger.log("the reserved battery is full, cannot charge more energy", LogLevel.INFO);
             energyLevel = Math.min(MAX_CAPACITY, energyLevel + energy);
-            logger.log(LogLevel.INFO, "energy level is " + energyLevel);
+            logger.log("energy level is " + energyLevel, LogLevel.INFO);
         } finally {
             lock.unlock();
-            logger.log(LogLevel.INFO, "unlocking the reserved battery after charging");
-            logger.log(LogLevel.INFO, "---------------------------------------------------");
+            logger.log("unlocking the reserved battery after charging", LogLevel.INFO);
+            logger.log("---------------------------------------------------", LogLevel.INFO);
         }
     }
 
     public void discharge(int energy) {
         try {
             lock.lock();
-            logger.log(LogLevel.INFO, "---------------------------------------------------");
-            logger.log(LogLevel.INFO, "locking the reserved battery to discharge");
-            logger.log(LogLevel.INFO, "discharging " + energy);
+            logger.log("---------------------------------------------------", LogLevel.INFO);
+            logger.log("locking the reserved battery to discharge", LogLevel.INFO);
+            logger.log("discharging " + energy, LogLevel.INFO);
             energyLevel = Math.max(0, energyLevel - energy);
         } finally {
             lock.unlock();
-            logger.log(LogLevel.INFO, "unlocking the reserved battery after discharging");
-            logger.log(LogLevel.INFO, "---------------------------------------------------");
+            logger.log("unlocking the reserved battery after discharging", LogLevel.INFO);
+            logger.log("---------------------------------------------------", LogLevel.INFO);
         }
     }
 }

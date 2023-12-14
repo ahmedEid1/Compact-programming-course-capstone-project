@@ -1,4 +1,4 @@
-package logging.search;
+package search;
 
 import java.io.File;
 import java.util.ArrayList;

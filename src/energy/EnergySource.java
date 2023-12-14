@@ -1,5 +1,6 @@
 package energy;
 
+import logging.EnergySourceLogger;
 import logging.LogLevel;
 import logging.Logger;
 
@@ -22,13 +23,13 @@ public class EnergySource {
     private final EnergySourceType type;
     private boolean isWorking;
 
-    private Logger logger;
+    private EnergySourceLogger logger;
 
     public EnergySource(EnergySourceType type, ReservedBattery reservedBattery, String stationName) {
         this.isWorking = true;
         this.lock = new ReentrantLock();
         this.type = type;
-        this.logger = new Logger("logs/EnergySources/" + stationName + "/" + type + ".log", true);
+        this.logger = new EnergySourceLogger(stationName, type.toString(), true);
 
         // Set up a scheduled executor service with one thread and schedule the checkWeatherCondition method to run every 1 minute
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
@@ -40,12 +41,12 @@ public class EnergySource {
             while (true) {
                 if (isWorking()) {
                     reservedBattery.charge(5, type.toString());
-                    logger.log(LogLevel.INFO, "Charging reserved battery with 5 energy units from " + type + " energy source.");
+                    logger.log("Charging reserved battery with 5 energy units from " + type + " energy source.", LogLevel.INFO);
                 }
 
                 try {
                     Thread.sleep(5000);
-                    logger.log(LogLevel.INFO, "Waiting for 5 seconds.");
+                    logger.log("Waiting for 5 seconds.", LogLevel.INFO);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -58,8 +59,8 @@ public class EnergySource {
     public boolean isWorking() {
         try {
             lock.lock();
-            logger.log(LogLevel.INFO, "Checking if " + type + " energy source is working.");
-            logger.log(LogLevel.INFO, "Is " + type + " energy source working? " + isWorking);
+            logger.log("Checking if " + type + " energy source is working.", LogLevel.INFO);
+            logger.log("Is " + type + " energy source working? " + isWorking, LogLevel.INFO);
             return isWorking;
         } finally {
             lock.unlock();
@@ -74,33 +75,33 @@ public class EnergySource {
 
         try {
             lock.lock();
-            logger.log(LogLevel.INFO, "Checking weather conditions for " + type + " energy source.");
+            logger.log("Checking weather conditions for " + type + " energy source.", LogLevel.INFO);
             switch (type) {
                 case SOLAR:
                     if (isSunny) {
                         startWorking();
-                        logger.log(LogLevel.INFO, "Solar energy source is working because it is sunny.");
+                        logger.log("Solar energy source is working because it is sunny.", LogLevel.INFO);
                     } else {
                         stopWorking();
-                        logger.log(LogLevel.INFO, "Solar energy source is not working because it is not sunny.");
+                        logger.log("Solar energy source is not working because it is not sunny.", LogLevel.INFO);
                     }
                     break;
                 case WIND:
                     if (isWindy) {
                         startWorking();
-                        logger.log(LogLevel.INFO, "Wind energy source is working because it is windy.");
+                        logger.log("Wind energy source is working because it is windy.", LogLevel.INFO);
                     } else {
                         stopWorking();
-                        logger.log(LogLevel.INFO, "Wind energy source is not working because it is not windy.");
+                        logger.log("Wind energy source is not working because it is not windy.", LogLevel.INFO);
                     }
                     break;
                 case GAS:
                     if (!isCold) {
                         startWorking();
-                        logger.log(LogLevel.INFO, "Gas energy source is working because it is not cold.");
+                        logger.log("Gas energy source is working because it is not cold.", LogLevel.INFO);
                     } else {
                         stopWorking();
-                        logger.log(LogLevel.INFO, "Gas energy source is not working because it is cold.");
+                        logger.log("Gas energy source is not working because it is cold.", LogLevel.INFO);
                     }
                     break;
             }
@@ -110,12 +111,12 @@ public class EnergySource {
     }
 
     private void startWorking() {
-        logger.log(LogLevel.INFO, "Starting " + type + " energy source.");
+        logger.log("Starting " + type + " energy source.", LogLevel.INFO);
         isWorking = true;
     }
 
     private void stopWorking() {
-        logger.log(LogLevel.INFO, "Stopping " + type + " energy source.");
+        logger.log("Stopping " + type + " energy source.", LogLevel.INFO);
         isWorking = false;
     }
 }

@@ -5,6 +5,7 @@ import cars.ChargingCar;
 import energy.EnergySource;
 import energy.EnergySourceType;
 import energy.ReservedBattery;
+import logging.ChargingStationLogger;
 import logging.LogLevel;
 import logging.Logger;
 
@@ -45,12 +46,12 @@ public class ChargingStation {
 
     private List<EnergySource> energySources;
     private ReservedBattery reservedBattery;
-    private Logger logger;
+    private ChargingStationLogger logger;
 
     public ChargingStation(int capacity, String name) {
         this.name = name;
         this.lock = new ReentrantLock();
-        this.logger = new Logger("logs/Stations/" + name + "/charging_station.log", true);
+        this.logger = new ChargingStationLogger( name, true);
 
         // ---- energy sources ----
         this.reservedBattery = new ReservedBattery(this.name + " battery");
@@ -79,7 +80,7 @@ public class ChargingStation {
                 if (carCharging != null) {
                     carCharging.chargingTime--;
                     if (carCharging.chargingTime <= 0) {
-                        logger.log(LogLevel.INFO, "Car " + carCharging.car.getId() + " is done charging at Station" + name);
+                        logger.log("Car " + carCharging.car.getId() + " is done charging at Station" + name, LogLevel.INFO);
                         chargingCarList[i] = null;
                         // Get the next car in queue and charge it
                         ChargingCar nextCar = carQueue.remove();
@@ -87,7 +88,7 @@ public class ChargingStation {
                             chargeCar(nextCar, i);
                         }
                     } else {
-                        logger.log(LogLevel.INFO, "Car " + carCharging.car.getId() + " is charging at Station" + name + " for " + carCharging.chargingTime + " minutes.");
+                        logger.log("Car " + carCharging.car.getId() + " is charging at Station" + name + " for " + carCharging.chargingTime + " minutes.", LogLevel.INFO);
                     }
                     updateSmallestChargingTime();
                 } else {
@@ -106,7 +107,7 @@ public class ChargingStation {
 
     private void chargeCar(ChargingCar car, int index) {
         chargingCarList[index] = car;
-        logger.log(LogLevel.INFO, "Car " + car.car.getId() + " is charging at Station" + name + " for " + car.chargingTime + " minutes.");
+        logger.log("Car " + car.car.getId() + " is charging at Station" + name + " for " + car.chargingTime + " minutes.", LogLevel.INFO);
     }
 
     private void updateSmallestChargingTime() {
@@ -116,12 +117,13 @@ public class ChargingStation {
             }
         }
     }
- // ---- managing the station queue ----
+
+    // ---- managing the station queue ----
     public boolean addToStation(Car car) {
         int waitingTime = getWaitingTimeForNextCar();
-        logger.log(LogLevel.INFO, "Car " + car.getId() + " - Waiting Time: " + waitingTime + " minutes");
+        logger.log("Car " + car.getId() + " - Waiting Time: " + waitingTime + " minutes", LogLevel.INFO);
         if (waitingTime >= 15) {
-            logger.log(LogLevel.INFO, "Car " + car.getId() + " - Waiting Time is more than 15 minutes, switching to the next station.");
+            logger.log("Car " + car.getId() + " - Waiting Time is more than 15 minutes, switching to the next station.", LogLevel.INFO);
             return false;
         }
         for (int i = 0; i < chargingCarList.length; i++) {
@@ -132,17 +134,17 @@ public class ChargingStation {
             }
         }
         carQueue.add(car);
-        logger.log(LogLevel.INFO, "Car " + car.getId() + " added to the queue at Station.");
+        logger.log("Car " + car.getId() + " added to the queue at Station.", LogLevel.INFO);
         return true;
     }
 
     public int getWaitingTimeForNextCar() {
-        logger.log(LogLevel.INFO, "Number of empty locations: " + getNumberOfEmptyLocation());
-        logger.log(LogLevel.INFO, "Number of cars in queue: " + carQueue.size());
+        logger.log("Number of empty locations: " + getNumberOfEmptyLocation(), LogLevel.INFO);
+        logger.log("Number of cars in queue: " + carQueue.size(), LogLevel.INFO);
         if (carQueue.size() < getNumberOfEmptyLocation()) {
             return 0;
         }
-        logger.log(LogLevel.INFO, "Smallest charging time: " + smallestChargingTime);
+        logger.log("Smallest charging time: " + smallestChargingTime, LogLevel.INFO);
         return smallestChargingTime + carQueue.calculateTotalChargingTime();
     }
 
@@ -156,5 +158,4 @@ public class ChargingStation {
         return nulls;
     }
     // ---- managing the station queue ----
-
 }

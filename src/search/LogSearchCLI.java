@@ -1,4 +1,4 @@
-package logging.search;
+package search;
 
 import java.awt.*;
 import java.io.File;
