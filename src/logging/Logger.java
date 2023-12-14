@@ -10,26 +10,41 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Logger {
-    private final String filePath;
+    protected final String loggerName;
+    protected final String baseFolderPath;
     private final boolean writeToConsole;
+    private Date testDay;
 
-    public Logger(String filePath, boolean writeToConsole) {
-        this.filePath = filePath;
+    public Logger(String loggerName, String baseFolderPath, boolean writeToConsole) {
+        this.loggerName = loggerName;
+        this.baseFolderPath = baseFolderPath;
         this.writeToConsole = writeToConsole;
         createFoldersAndFile();
     }
 
-    private void createFoldersAndFile() {
-        Path path = Paths.get(filePath);
-        File parentDirectory = path.toFile().getParentFile();
+
+    // TODO: remove after testing
+    // For testing purpose
+    public Logger(String loggerName, String baseFolderPath, boolean writeToConsole, Date date) {
+        this.loggerName = loggerName;
+        this.baseFolderPath = baseFolderPath;
+        this.writeToConsole = writeToConsole;
+        testDay = date;
+        createFoldersAndFile(date);
+    }
+
+    protected void createFoldersAndFile() {
+        String todayDateString = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        Path logFilePath = Paths.get(baseFolderPath, todayDateString, "[" + todayDateString + "]" + loggerName + "_logs.txt");
+
+        File logFile = logFilePath.toFile();
+        File parentDirectory = logFile.getParentFile();
 
         if (!parentDirectory.exists()) {
             if (!parentDirectory.mkdirs()) {
                 throw new RuntimeException("Failed to create parent directories for log file.");
             }
         }
-
-        File logFile = path.toFile();
 
         if (!logFile.exists()) {
             try {
@@ -42,29 +57,69 @@ public class Logger {
         }
     }
 
-    public void log(LogLevel level, String message) {
-        String formattedMessage = formatMessage(level, message);
-        writeToFile(formattedMessage);
-        if (writeToConsole) {
-            writeToConsole(formattedMessage);
-        }
-    }
-
-    private String formatMessage(LogLevel level, String message) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    protected String formatMessage(LogLevel level, String message) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
         String timestamp = dateFormat.format(new Date());
         return "[" + timestamp + "] [" + level + "] " + message;
     }
 
-    private void writeToFile(String formattedMessage) {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(filePath, true))) {
-            writer.println(formattedMessage);
-        } catch (IOException e) {
-            throw new RuntimeException("Error writing to log file.", e);
+    public void log(String message, LogLevel level) {
+        System.out.println("Logging message: " + message);
+        writeToFile(message, level);
+        if (writeToConsole) {
+            writeToConsole(message);
         }
     }
 
-    private void writeToConsole(String formattedMessage) {
+    protected void writeToFile(String message, LogLevel level) {
+        String formattedMessage = formatMessage(level, message);
+        try (PrintWriter writer = new PrintWriter(new FileWriter(getTodayLogFilePath().toString(), true))) {
+            writer.println(formattedMessage);
+            System.out.println("Log written to file.");
+            System.out.println("Log file path: " + getTodayLogFilePath().toString());
+        } catch (IOException e) {
+            throw new RuntimeException("Error writing to log file.", e);
+        }
+
+    }
+
+    protected void writeToConsole(String formattedMessage) {
         System.out.println(formattedMessage);
     }
+
+    private Path getTodayLogFilePath() {
+        if (testDay != null) {
+            String testDayString = new SimpleDateFormat("yyyy-MM-dd").format(testDay);
+            return Paths.get(baseFolderPath, testDayString, "[" + testDayString + "]" + loggerName + "_logs.txt");
+        }
+
+        String todayDateString = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        return Paths.get(baseFolderPath, todayDateString, "[" + todayDateString + "]" + loggerName + "_logs.txt");
+    }
+
+    // For testing purpose
+    protected void createFoldersAndFile(Date date) {
+        String todayDateString = new SimpleDateFormat("yyyy-MM-dd").format(date);
+        Path logFilePath = Paths.get(baseFolderPath, todayDateString, "[" + todayDateString + "]" + loggerName + "_logs.txt");
+
+        File logFile = logFilePath.toFile();
+        File parentDirectory = logFile.getParentFile();
+
+        if (!parentDirectory.exists()) {
+            if (!parentDirectory.mkdirs()) {
+                throw new RuntimeException("Failed to create parent directories for log file.");
+            }
+        }
+
+        if (!logFile.exists()) {
+            try {
+                if (!logFile.createNewFile()) {
+                    throw new RuntimeException("Failed to create log file.");
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Error creating log file.", e);
+            }
+        }
+    }
+
 }
