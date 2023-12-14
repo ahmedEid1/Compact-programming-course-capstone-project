@@ -1,4 +1,4 @@
-# Task 3 for compact programming course - java
+# Task 4 for compact programming course - java
 
 ## team members:
 
@@ -6,41 +6,59 @@
 2. Varsha Vijayan (7216653 ,MDT)
 3. Silpa Prasad Sivaprasad (7216655 ,MDT)
 
-## team responsibilities for task 3:
+## team responsibilities for task 4:
 
-1. `Car + ChargingCar + charging Logic in the ChargingStation` / Task: Simulate the system which allow to charge 
-   simultaneously 1..N vehicles, depending on the available resources.
-    - Silpa Prasad Sivaprasad
+1. Ahmed Hobeishy
+    - a base Logger that get the date of today and choose the folder and file to log to based on it
+    - 3 sub loggers for each of the 3 classes that we need to log for
+    - log generator that generates test logs for the last x days, so we can see how logs will look like after days of running the system
 
-2. `StationWaitingQueue + queue managment logic in the ChargingStation` / Task: car arriving in random moment of time.
-   When the car appear in the queue should be calculated the waiting time, if time is more then 15 min car leaving the
-   queue.
-    - Varsha Vijayan
+2. Silpa Prasad Sivaprasad
+    - search utility that uses Regular expressions to search for the log file based on the name of the equipment or date
+3. Varsha Vijayan
+    - Command line interface that uses the search utility to search for the log file and open it in the default text editor
 
-3. `EnergySource + ReservedBattery + EnergySourceType` / Task: Simulate multithread charging of the reserved batteries
-   from several energy sources + test the entire application.
-    - Ahmed Hobeishy
+----
+## running the solution:
+1. run the `LogGenerator` class in the logging package to generate some logs
+2. run the `LogSearchCLI` class in the logging package to search for the log file and open it in the default text editor
+3. check the results you get is consistent with what we have in the logs folder
+-----
 
 ## our solution (you can check the output in the logs folder):
 
-- if you run the main method:
-- 2 charging stations will be created with 2 charging points each
-    - every station will have a waiting queue
-        - cars will be added randomly to the waiting queue of a station, if it can't be added to the queue, it will be
-          added to the other station
+we continued to use the same classes from task 3 and add the following logic:
 
-- for the energy sources and battery:
-    - ever station will have 3 energy sources, a thread will run every 30 seconds to check the weather and see if the
-      energy source is will be working or not
-    - every energy source will have a thread that will run every 5 seconds and if the source is working, it will charge
-      the battery
+1. ### for part 1 `Add logs files for each day for each charging station, for each energy source and for all system as whole.` we did the following:
+    - we have a base Logger that get the date of today and choose the folder and file to log to based on it
+    - we create 3 sub loggers for each of the 3 classes that we need to log for
+        - ChargingStationLogger
+            - log to the "logs/chargingStations" folder and create a file for each charging station
+        - EnergySourceLogger
+            - log to the "logs/energySources" folder and create a file for each energy source
+        - SystemLogger
+            - log to the "logs/system" folder and create a file for the different system parts
+    - #### for testing:
+        - we have the `LogGenerator` class
+            - it generates test logs for the last x days, so we can see how logs will look like after days of running
+              the
+              system
+            - **_to generate some logs, just run the log generator class in the logging package_**
+    - #### results
+    - ![img.png](img.png)
 
-- every station has its own charging thread, so multiple station will be working on parallel each with its own charging
-  point and queue
+----
 
-Note:
-we removed the logic from the previous 2 task to focus on the logic of the new task,
-for the capstone project we will review the 3 tasks, merge them and remove any logic that is not needed anymore or add logic that is needed for the  complete project.
+1. ### for part 2 `Give user the possibility to open the requested log file based on the name of the equipment or date` we did the following:
+    -  ### search utility that uses Regular expressions to search for the log file based on the name of the equipment or date
+    - `LogSearchUtility` class is the one responsible for searching for the log file
+        - it uses regular expressions to search for the log file based on the name of the equipment or date
+          ![img_1.png](img_1.png)
+    - ### Command line interface that uses the search utility to search for the log file and open it in the default text editor
+        - `LogSearchCLI` class is the one responsible for the command line interface
+            - it uses the search utility to search for the log file and open it in the default text editor
+              ![img_2.png](img_2.png)
+----
 
 ## Environment:
 - Eclipse IDE
