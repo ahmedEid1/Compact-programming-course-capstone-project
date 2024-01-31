@@ -1,5 +1,6 @@
 package energy;
 
+import chargingSimulation.ChargingSimulationUI;
 import logging.EnergySourceLogger;
 import logging.LogLevel;
 import logging.Logger;
@@ -33,7 +34,7 @@ public class EnergySource {
 
         // Set up a scheduled executor service with one thread and schedule the checkWeatherCondition method to run every 1 minute
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-        executorService.scheduleAtFixedRate(this::checkWeatherCondition, 0, 30, TimeUnit.SECONDS);
+        executorService.scheduleAtFixedRate(this::checkWeatherCondition, 0, 10, TimeUnit.SECONDS);
 
 
         // Start a thread to charge the reserved battery, if the energy source is working
@@ -68,10 +69,11 @@ public class EnergySource {
     }
 
     private void checkWeatherCondition() {
-        // Simulated logic to check weather conditions
-        boolean isSunny = Math.random() > 0.5;
-        boolean isWindy = Math.random() > 0.5;
-        boolean isCold = Math.random() > 0.5;
+        String[] conditions = WeatherService.readWeatherConditions().split(",");
+        boolean isSunny = Boolean.parseBoolean(conditions[0]);
+        boolean isWindy = Boolean.parseBoolean(conditions[1]);
+        boolean isCold = Boolean.parseBoolean(conditions[2]);
+
 
         try {
             lock.lock();
@@ -118,5 +120,13 @@ public class EnergySource {
     private void stopWorking() {
         logger.log("Stopping " + type + " energy source.", LogLevel.INFO);
         isWorking = false;
+    }
+
+    public void setUi(ChargingSimulationUI ui) {
+        logger.setUi(ui);
+    }
+
+    public EnergySourceType getType() {
+        return type;
     }
 }

@@ -2,14 +2,16 @@ package station;
 
 import cars.Car;
 import cars.ChargingCar;
+import chargingSimulation.ChargingSimulationUI;
 import energy.EnergySource;
 import energy.EnergySourceType;
 import energy.ReservedBattery;
 import logging.ChargingStationLogger;
 import logging.LogLevel;
-import logging.Logger;
+import users.User;
 
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -47,6 +49,7 @@ public class ChargingStation {
     private List<EnergySource> energySources;
     private ReservedBattery reservedBattery;
     private ChargingStationLogger logger;
+    private ChargingSimulationUI ui;
 
     public ChargingStation(int capacity, String name) {
         this.name = name;
@@ -60,6 +63,7 @@ public class ChargingStation {
                 new EnergySource(EnergySourceType.WIND, reservedBattery, name),
                 new EnergySource(EnergySourceType.GAS, reservedBattery, name)
         );
+
         // ---- energy sources ----
 
         this.capacity = capacity;
@@ -81,6 +85,7 @@ public class ChargingStation {
                     carCharging.chargingTime--;
                     if (carCharging.chargingTime <= 0) {
                         logger.log("Car " + carCharging.car.getId() + " is done charging at Station" + name, LogLevel.INFO);
+                        ui.appendLog(carCharging.car.getId() , "Car " + carCharging.car.getId() + " is done charging at Station" + name);
                         chargingCarList[i] = null;
                         // Get the next car in queue and charge it
                         ChargingCar nextCar = carQueue.remove();
@@ -89,6 +94,7 @@ public class ChargingStation {
                         }
                     } else {
                         logger.log("Car " + carCharging.car.getId() + " is charging at Station" + name + " for " + carCharging.chargingTime + " minutes.", LogLevel.INFO);
+                        ui.appendLog(carCharging.car.getId() , "Car " + carCharging.car.getId() + " is charging at Station" + name + " for " + carCharging.chargingTime + " minutes.");
                     }
                     updateSmallestChargingTime();
                 } else {
@@ -108,6 +114,7 @@ public class ChargingStation {
     private void chargeCar(ChargingCar car, int index) {
         chargingCarList[index] = car;
         logger.log("Car " + car.car.getId() + " is charging at Station" + name + " for " + car.chargingTime + " minutes.", LogLevel.INFO);
+        ui.appendLog(car.car.getId() , "Car " + car.car.getId() + " is charging at Station" + name + " for " + car.chargingTime + " minutes.");
     }
 
     private void updateSmallestChargingTime() {
@@ -148,7 +155,7 @@ public class ChargingStation {
         return smallestChargingTime + carQueue.calculateTotalChargingTime();
     }
 
-    private int getNumberOfEmptyLocation() {
+    public int getNumberOfEmptyLocation() {
         int nulls = 0;
         for (ChargingCar car : chargingCarList) {
             if (car == null) {
@@ -157,5 +164,36 @@ public class ChargingStation {
         }
         return nulls;
     }
+
+    public Integer getAvailableSlots() {
+        return getNumberOfEmptyLocation();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setUi(ChargingSimulationUI ui) {
+        this.ui = ui;
+        this.logger.setUi(ui);
+        for (EnergySource energySource : energySources) {
+            energySource.setUi(ui);
+        }
+        this.reservedBattery.setUi(ui);
+        this.carQueue.setUi(ui);
+    }
+
+    public StationWaitingQueue getQueue() {
+        return carQueue;
+    }
+
+    public void addEnergySource(String energySource) {
+        energySources.add(new EnergySource(EnergySourceType.valueOf(energySource), reservedBattery, name));
+    }
+
+    public void removeEnergySource(String energySource) {
+        energySources.removeIf(source -> source.getType().equals(EnergySourceType.valueOf(energySource)));
+    }
+
     // ---- managing the station queue ----
 }

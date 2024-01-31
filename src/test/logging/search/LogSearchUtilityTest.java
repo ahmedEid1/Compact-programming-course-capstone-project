@@ -1,6 +1,6 @@
 package test.logging.search;
 
-import logging.search.LogSearchUtility;
+import search.LogSearchUtility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 

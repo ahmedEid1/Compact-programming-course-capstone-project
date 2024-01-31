@@ -26,7 +26,12 @@ public class LogGenerator {
             Logger logger = new Logger(loggerName, baseFolderPath, false, date);
             // generate random number of logs for each day
             generateLogs(logger);
+
+            // archive and delete old logs
+            logger.archiveLogs(2);
+            logger.deleteOldLogs(2);
         }
+
     }
 
     private static void generateLogs(Logger logger) {

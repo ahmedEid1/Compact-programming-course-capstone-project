@@ -1,5 +1,6 @@
 package energy;
 
+import chargingSimulation.ChargingSimulationUI;
 import logging.ChargingStationLogger;
 import logging.LogLevel;
 import logging.Logger;
@@ -71,5 +72,9 @@ public class ReservedBattery {
             logger.log("unlocking the reserved battery after discharging", LogLevel.INFO);
             logger.log("---------------------------------------------------", LogLevel.INFO);
         }
+    }
+
+    public void setUi(ChargingSimulationUI ui) {
+        logger.setUi(ui);
     }
 }

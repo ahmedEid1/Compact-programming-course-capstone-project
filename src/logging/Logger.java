@@ -23,7 +23,6 @@ public class Logger {
     }
 
 
-    // TODO: remove after testing
     // For testing purpose
     public Logger(String loggerName, String baseFolderPath, boolean writeToConsole, Date date) {
         this.loggerName = loggerName;
@@ -75,8 +74,6 @@ public class Logger {
         String formattedMessage = formatMessage(level, message);
         try (PrintWriter writer = new PrintWriter(new FileWriter(getTodayLogFilePath().toString(), true))) {
             writer.println(formattedMessage);
-            System.out.println("Log written to file.");
-            System.out.println("Log file path: " + getTodayLogFilePath().toString());
         } catch (IOException e) {
             throw new RuntimeException("Error writing to log file.", e);
         }
@@ -121,5 +118,100 @@ public class Logger {
             }
         }
     }
+
+    public void archiveLogs(int days) {
+        try {
+            Path logFolder = Paths.get(baseFolderPath);
+            if (!logFolder.toFile().exists()) {
+                throw new RuntimeException("Log folder does not exist.");
+            }
+
+            File[] logFolders = logFolder.toFile().listFiles();
+            if (logFolders == null) {
+                throw new RuntimeException("Log folder is empty.");
+            }
+
+            for (File logFolderFile : logFolders) {
+                if (logFolderFile.isDirectory()) {
+                    String logFolderName = logFolderFile.getName();
+                    Date logFolderDate = new SimpleDateFormat("yyyy-MM-dd").parse(logFolderName);
+                    Date today = new Date();
+                    long diff = today.getTime() - logFolderDate.getTime();
+                    long diffDays = diff / (24 * 60 * 60 * 1000);
+
+                    if (diffDays >= days) {
+                        Path archiveFolder = Paths.get("log_archive");
+                        if (!archiveFolder.toFile().exists()) {
+                            if (!archiveFolder.toFile().mkdirs()) {
+                                throw new RuntimeException("Failed to create archive folder.");
+                            }
+                        }
+
+                        Path archiveLogFolder = archiveFolder.resolve(logFolderName);
+                        if (!archiveLogFolder.toFile().exists()) {
+                            if (!archiveLogFolder.toFile().mkdirs()) {
+                                throw new RuntimeException("Failed to create archive log folder.");
+                            }
+                        }
+
+                        File[] logFiles = logFolderFile.listFiles();
+                        if (logFiles == null) {
+                            throw new RuntimeException("Log folder is empty.");
+                        }
+
+                        for (File logFile : logFiles) {
+                            Path archiveLogFilePath = archiveLogFolder.resolve(logFile.getName());
+                            if (!logFile.renameTo(archiveLogFilePath.toFile())) {
+                                throw new RuntimeException("Failed to move log file to archive.");
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error while archiving log folders: " + e.getMessage());
+        }
+    }
+
+    public void deleteOldLogs(int days) {
+        try {
+            Path logFolder = Paths.get(baseFolderPath);
+            if (!logFolder.toFile().exists()) {
+                throw new RuntimeException("Log folder does not exist.");
+            }
+
+            File[] logFolders = logFolder.toFile().listFiles();
+            if (logFolders == null) {
+                throw new RuntimeException("Log folder is empty.");
+            }
+
+            for (File logFolderFile : logFolders) {
+                if (logFolderFile.isDirectory()) {
+                    String logFolderName = logFolderFile.getName();
+                    Date logFolderDate = new SimpleDateFormat("yyyy-MM-dd").parse(logFolderName);
+                    Date today = new Date();
+                    long diff = today.getTime() - logFolderDate.getTime();
+                    long diffDays = diff / (24 * 60 * 60 * 1000);
+
+                    if (diffDays >= days) {
+                        deleteFolder(logFolderFile);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error while deleting old log folders: " + e.getMessage());
+        }
+    }
+
+    private void deleteFolder(File folder) {
+        File[] files = folder.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                deleteFolder(file);
+            }
+        }
+        folder.delete();
+    }
+
 
 }

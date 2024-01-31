@@ -2,6 +2,7 @@ package station;
 
 import cars.Car;
 import cars.ChargingCar;
+import chargingSimulation.ChargingSimulationUI;
 import logging.LogLevel;
 import logging.Logger;
 import logging.SystemLogger;
@@ -43,6 +44,12 @@ public class StationWaitingQueue {
         return null;
     }
 
+    // remove car
+    public void removeCar(Car car) {
+        queue.remove(car);
+    }
+
+
     public int size() {
         return queue.size();
     }
@@ -54,5 +61,9 @@ public class StationWaitingQueue {
         }
         logger.log("Total charging time for cars in queue: " + totalChargingTime, LogLevel.INFO);
         return totalChargingTime;
+    }
+
+    public void setUi(ChargingSimulationUI ui) {
+        logger.setUi(ui);
     }
 }
