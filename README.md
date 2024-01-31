@@ -1,11 +1,6 @@
-# running the application
-run the Main.java file, it will start the application and 2 UI will be opened.
-1. first UI for: the simulation of charging car.
-   - ![img_3.png](img_3.png)
-2. second UI for: a search utility for the logs.
-   - ![img_4.png](img_4.png)
-----
-# team members:
+# Car Charging Simulation
+
+## team members:
 1. Ahmed Hobeishy (7219053, MDT)
 2. Varsha Vijayan (7216653 ,MDT)
 3. Silpa Prasad Sivaprasad (7216655 ,MDT)
@@ -16,8 +11,23 @@ run the Main.java file, it will start the application and 2 UI will be opened.
 - JUnit 5
 
 ---
+## running the application
+run the Main.java file, it will start the application and 2 UI will be opened.
+1. first UI for: the simulation of charging car.
+   - ![img_3.png](img_3.png)
+2. second UI for: a search utility for the logs.
+   - ![img_4.png](img_4.png)
+----
 
-# Application Description
+## Tests 
+the application has 40 tests in total, divided into 4 test suites (one for each package).
+- they can be run all at once, 
+- or a single feature can be tested by running the test suite for that feature.
+- or a single test can be run by running the test class for that test.
+
+![img_5.png](img_5.png)
+
+----
 
 ## ChargingStation and Cars
 

@@ -85,7 +85,10 @@ public class ChargingStation {
                     carCharging.chargingTime--;
                     if (carCharging.chargingTime <= 0) {
                         logger.log("Car " + carCharging.car.getId() + " is done charging at Station" + name, LogLevel.INFO);
-                        ui.appendLog(carCharging.car.getId() , "Car " + carCharging.car.getId() + " is done charging at Station" + name);
+                        if (ui != null) {
+                        	ui.appendLog(carCharging.car.getId() , "Car " + carCharging.car.getId() + " is done charging at Station" + name);	
+                        }
+                      
                         chargingCarList[i] = null;
                         // Get the next car in queue and charge it
                         ChargingCar nextCar = carQueue.remove();
@@ -94,7 +97,10 @@ public class ChargingStation {
                         }
                     } else {
                         logger.log("Car " + carCharging.car.getId() + " is charging at Station" + name + " for " + carCharging.chargingTime + " minutes.", LogLevel.INFO);
-                        ui.appendLog(carCharging.car.getId() , "Car " + carCharging.car.getId() + " is charging at Station" + name + " for " + carCharging.chargingTime + " minutes.");
+                        if (ui != null) {
+                        	ui.appendLog(carCharging.car.getId() , "Car " + carCharging.car.getId() + " is charging at Station" + name + " for " + carCharging.chargingTime + " minutes.");	
+                        }
+                        
                     }
                     updateSmallestChargingTime();
                 } else {
@@ -114,7 +120,7 @@ public class ChargingStation {
     private void chargeCar(ChargingCar car, int index) {
         chargingCarList[index] = car;
         logger.log("Car " + car.car.getId() + " is charging at Station" + name + " for " + car.chargingTime + " minutes.", LogLevel.INFO);
-        ui.appendLog(car.car.getId() , "Car " + car.car.getId() + " is charging at Station" + name + " for " + car.chargingTime + " minutes.");
+        if (ui != null) ui.appendLog(car.car.getId() , "Car " + car.car.getId() + " is charging at Station" + name + " for " + car.chargingTime + " minutes.");
     }
 
     private void updateSmallestChargingTime() {
