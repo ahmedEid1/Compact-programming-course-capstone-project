@@ -1,12 +1,18 @@
 package users;
 
-import charingStations.ChargingStation;
-import logging.LogManager;
+import cars.Car;
+import station.ChargingStation;
+import station.StationWaitingQueue;
 
-import java.util.Queue;
-
+/*
+* an admin can:
+* - add energy source to a station
+* - remove energy source from a station
+* - add car to a queue
+* - remove car from a queue
+*/
 public class Admin {
-    private String adminId;
+    private final String adminId;
 
     public Admin(String adminId) {
         this.adminId = adminId;
@@ -16,25 +22,23 @@ public class Admin {
         return adminId;
     }
 
-    public void changeChargingMethod(ChargingStation chargingStation, String newChargingMethod) {
-        // Logic for an administrator to change the charging method of a charging station
-        try {
-            chargingStation.setChargingMethod(newChargingMethod, adminId);
-            System.out.println("Charging method changed to " + newChargingMethod + " at Charging Station " + chargingStation.getStationId());
-        } catch (IllegalAccessException e) {
-            System.out.println("you are not an admin of this station");
-            LogManager.logChargingStationFunctionality(adminId + " is not an admin" + " at Charging Station " + chargingStation.getStationId());
-        }
+    public void addEnergySource(ChargingStation chargingStation, String energySource) {
+        chargingStation.addEnergySource(energySource);
     }
 
-    public void handleQueue(ChargingStation chargingStation) {
-        // Logic for an administrator to handle the charging queue
-        try {
-            Queue<User> q = chargingStation.getQueue(adminId);
-            // TODO: logic to handle the queue and do different actions based on the queue and what the admin wants to do
-        } catch (IllegalAccessException e) {
-            System.out.println("Not an admin");
-            LogManager.logChargingStationFunctionality(adminId + " is not an admin" + " at Charging Station " + chargingStation.getStationId());
-        }
+    // removes a energy source from a station
+    public void removeEnergySource(ChargingStation chargingStation, String energySource) {
+        chargingStation.removeEnergySource(energySource);
     }
+
+    public void addCarToQueue(ChargingStation chargingStation, Car car) {
+        StationWaitingQueue chargingStationQueue = chargingStation.getQueue();
+        chargingStationQueue.add(car);
+    }
+
+    public void removeCarFromQueue(ChargingStation chargingStation, Car car) {
+        StationWaitingQueue chargingStationQueue = chargingStation.getQueue();
+        chargingStationQueue.removeCar(car);
+    }
+
 }

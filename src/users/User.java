@@ -1,14 +1,20 @@
 package users;
 
-import car.Car;
-import charingStations.ChargingStation;
+import cars.Car;
+import station.ChargingStation;
+
+/*
+ * a user can:
+ * - add car to a queue
+ * - remove car from a queue
+ */
 public class User {
     private String userId;
     private Car car;
 
-    public User(String userId, Car carModel) {
+    public User(String userId, Car car) {
         this.userId = userId;
-        this.car = carModel;
+        this.car = car;
     }
 
     public String getUserId() {
@@ -19,11 +25,19 @@ public class User {
         return car;
     }
 
-    public void addToQueue(ChargingStation chargingStation) {
-        chargingStation.addToQueue(this);
+    public boolean addToQueue(ChargingStation chargingStation) {
+        return chargingStation.addToStation(car);
+    }
+
+    public void removeFromQueue(ChargingStation chargingStation) {
+        chargingStation.getQueue().removeCar(car);
     }
 
     public String getId() {
         return userId;
+    }
+
+    public String getCarId() {
+        return car.getId();
     }
 }
