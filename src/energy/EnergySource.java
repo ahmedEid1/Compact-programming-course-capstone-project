@@ -34,7 +34,7 @@ public class EnergySource {
 
         // Set up a scheduled executor service with one thread and schedule the checkWeatherCondition method to run every 1 minute
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-        executorService.scheduleAtFixedRate(this::checkWeatherCondition, 0, 10, TimeUnit.SECONDS);
+        executorService.scheduleAtFixedRate(this::checkWeatherCondition, 0, 5, TimeUnit.SECONDS);
 
 
         // Start a thread to charge the reserved battery, if the energy source is working

@@ -20,7 +20,7 @@ public class ChargingSimulator {
 
         // start weather simulation
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-        executorService.scheduleAtFixedRate(WeatherService::writeWeatherConditions, 0, 15, TimeUnit.SECONDS);
+        executorService.scheduleAtFixedRate(WeatherService::writeWeatherConditions, 0, 20, TimeUnit.SECONDS);
 
         ChargingSimulationUI ui = getChargingSimulationUI(chargingStations, cars);
 
