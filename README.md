@@ -144,5 +144,50 @@ In the car charging simulation, there are two types of users: `Admin` and `User`
 This multi-user access allows for a realistic simulation of a car charging station, where different users have different levels of access and control.
 
 ---
+# Search Functionality
 
+The search functionality in this application is primarily handled by the `LogSearchUtility` class, `LogSearchCLI` class, and `LogSearchGUI` class.
 
+## LogSearchUtility
+
+The `LogSearchUtility` class provides methods to search for logs in the log folder based on name/date or any combination of the two. It is written in Java and is part of the `search` package.
+
+### Methods
+
+The `LogSearchUtility` class provides the following public methods:
+
+- `searchLogs(String equipmentName, String dateString, String baseFolderPath)`: This method searches for logs based on the equipment name and date. It returns a list of matching log file paths.
+
+- `searchLogsByEquipmentName(String equipmentName, String baseFolderPath)`: This method searches for logs based on the equipment name. It returns a list of matching log file paths.
+
+- `searchLogsByDate(String dateString, String baseFolderPath)`: This method searches for logs based on the date. It returns a list of matching log file paths.
+
+### Usage
+
+To use the `LogSearchUtility`, you need to provide the base folder path where the logs are stored. The logs should be organized in a specific way: each equipment has its own folder, and inside each equipment folder, there are folders for each date. Inside the date folders, there are log files named in the format `[date]equipment_logs.txt`.
+
+Here is an example of how to use the `LogSearchUtility`:
+
+```java
+List<String> logs = LogSearchUtility.searchLogs("Equipment1", "2023-03-15", "/path/to/log/folder");
+```
+
+This will return a list of log file paths that match the equipment name "Equipment1" and the date "2023-03-15".
+
+## LogSearchCLI
+
+The `LogSearchCLI` class provides a command-line interface for the log search functionality. It prompts the user to enter the equipment name and date, and then it uses the `LogSearchUtility` to search for matching logs. The user can then choose a log file to open.
+
+## LogSearchGUI
+
+The `LogSearchGUI` class provides a graphical user interface for the log search functionality. It has text fields for the user to enter the equipment name and date, and a button to perform the search. The search results are displayed in a text area and a combo box. The user can select a log file from the combo box and click a button to open it.
+
+## Implementation Details
+
+The `LogSearchUtility` uses the `java.io.File` class to navigate the file system and the `java.util.regex.Pattern` class to match the log file names. It also uses the `java.util.List` and `java.util.ArrayList` classes to store and return the matching log file paths.
+
+The `LogSearchUtility` class also includes two private helper methods:
+
+- `searchAndCollectMatchingLogs(String equipmentName, File dateFolder)`: This method is used by `searchLogs` and `searchLogsByEquipmentName` to get all the log files in a date folder that match an equipment name.
+
+- `searchAndCollectAllLogs(File dateFolder)`: This method is used by `searchLogsByDate` to collect all log files in a date folder that match the date.
