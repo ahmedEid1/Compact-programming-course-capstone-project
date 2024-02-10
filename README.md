@@ -9,6 +9,10 @@
 - Eclipse IDE
 - Java 17
 - JUnit 5
+---
+### Demo video + presentation:
+- [Demo Video](https://www.youtube.com/watch?v=tHxkYcsYvWA)
+- [Presentation](./Car%20Charging%20Simulation.pptx)
 
 ---
 ## running the application
@@ -37,7 +41,7 @@ The `ChargingStation` and `Cars` are two fundamental entities in the car chargin
 
 - **Cars**: The `Car` class represents a car in the simulation. Each car has properties such as the car's ID, and charging speed. The `Car` class has methods to get the charging time and to check if the car is fully charged.
 
-These classes interact with each other and with other classes in the simulation to simulate the process of charging electric cars at charging stations.
+These classes interact with each other and with other classes in the simulation to simulate the process of charging cars at charging stations.
 
 ---
 
